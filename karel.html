@@ -1,7 +1,11 @@
-<script type="text/javascript" src="http://ajaz.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" />
+<!DOCTYPE html>
+<head>
+<title>Karel, the littlest robot</title>
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
 <script type="text/javascript">
   var o = {
     Karel: (function($){
+      //private classes
       var Tile = function(x,y) {
         this.x = x;
         this.y = y;
@@ -9,38 +13,62 @@
       Tile.prototype = {
         beepers:0,
         has_beeper: function() {
-          return (this.beepers > 0);
+          console.log(['Tile#has_beeper', this]);
+          return (this.beepers > 0) ? true : false;
         },
         pick: function() {
-        {
           if(this.has_beeper())
             this.beepers -= 1;
           else
-            throw "no_beepers"
+            throw "no_beepers";
         },
         put: function() {
           this.beepers += 1
         },
       };
       
-      var Map = {
-        __MAP__ = {},
-        at: function(x,y) {
-          var key = Math.pow(2,x)*Math.pow(3,y);
-          return this.__MAP__[key] || (
-            this.__MAP__[key] = new Tile(x,y)
-          );
-        },
-      }
+      var Map = (function() {
+        var
+          map = {},
+          jQ
+        ;
+        $(document).ready(function() {
+          jQ = $('#map');
+        })
+        return {
+          at: function(x,y) {
+            var key = Math.pow(2,x)*Math.pow(3,y);
+            return map[key] || (
+              map[key] = new Tile(x,y)
+            );
+          }
+        };
+      })();
 
       //return Karel, herself
       return (function() {
+
+        //Karel's private attributes
         var DIRECTIONS = {
           'up': 0,
           'right': 1,
           'down': 2,
           'left': 3
-        }
+        };
+
+        var jQ;
+
+        $(document).ready(function() {
+          jQ = $('#karel');
+        });
+
+
+        var DIRECTION_SYMBOLS = {
+          0: '^',
+          1: '>',
+          2: 'v',
+          3: '<'
+        };
 
         var x = 0, y = 0;
         var currentTile = function() {
@@ -50,6 +78,9 @@
 
         //public methods (this is Karel, herself)
         return {
+          currentTile: function() {
+            return currentTile();
+          },
           move: function() {
             switch(direction) {
               case DIRECTIONS.up:    return y += 1;
@@ -61,15 +92,16 @@
           turnLeft: function() {
             if(direction > 0) direction -= 1;
             else direction = 3;
+            jQ.text(DIRECTION_SYMBOLS[direction]);
           },
           put: function() {
-            currentTile.put();
+            return currentTile().put();
           },
           pick: function() {
-            currentTile.pick();
+            return currentTile().pick();
           },
           listen: function() {
-            currentTile.has_beeper();
+            return currentTile().has_beeper();
           }
         };
       })();
@@ -77,9 +109,44 @@
     runScript: (function() {
       return function(script) {
       };
-    })();
+    })()
   }
 </script>
+<style type="text/css">
+  #map, #map tr {
+    overflow: auto;
+    background-color: green;
+  }
+
+  #map tr td {
+    height: 10px;
+    width: 10px;
+    background-color: yellow;
+  }
+
+  #map tr td#karel {
+    background-color: red;
+  }
+</style>
+
+</head>
+<body>
 
 <table id="map">
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td id="karel">^</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 </table>
+</body>
