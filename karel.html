@@ -1,1 +1,85 @@
-Hello, world
+<script type="text/javascript" src="http://ajaz.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" />
+<script type="text/javascript">
+  var o = {
+    Karel: (function($){
+      var Tile = function(x,y) {
+        this.x = x;
+        this.y = y;
+      };
+      Tile.prototype = {
+        beepers:0,
+        has_beeper: function() {
+          return (this.beepers > 0);
+        },
+        pick: function() {
+        {
+          if(this.has_beeper())
+            this.beepers -= 1;
+          else
+            throw "no_beepers"
+        },
+        put: function() {
+          this.beepers += 1
+        },
+      };
+      
+      var Map = {
+        __MAP__ = {},
+        at: function(x,y) {
+          var key = Math.pow(2,x)*Math.pow(3,y);
+          return this.__MAP__[key] || (
+            this.__MAP__[key] = new Tile(x,y)
+          );
+        },
+      }
+
+      //return Karel, herself
+      return (function() {
+        var DIRECTIONS = {
+          'up': 0,
+          'right': 1,
+          'down': 2,
+          'left': 3
+        }
+
+        var x = 0, y = 0;
+        var currentTile = function() {
+          return Map.at(x, y)
+        };
+        var direction = 0;
+
+        //public methods (this is Karel, herself)
+        return {
+          move: function() {
+            switch(direction) {
+              case DIRECTIONS.up:    return y += 1;
+              case DIRECTIONS.down:  return y -= 1;
+              case DIRECTIONS.left:  return x -= 1;
+              case DIRECTIONS.right: return x += 1;
+            }
+          },
+          turnLeft: function() {
+            if(direction > 0) direction -= 1;
+            else direction = 3;
+          },
+          put: function() {
+            currentTile.put();
+          },
+          pick: function() {
+            currentTile.pick();
+          },
+          listen: function() {
+            currentTile.has_beeper();
+          }
+        };
+      })();
+    })(jQuery),
+    runScript: (function() {
+      return function(script) {
+      };
+    })();
+  }
+</script>
+
+<table id="map">
+</table>

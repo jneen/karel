@@ -9,8 +9,9 @@ end
 task :build do
   require 'erb'
   content = File.read('karel.html')
+  template = File.read('karel.xml.erb')
   File.write(
     'build/karel.xml',
-    ERB.new('karel.xml.erb').result(binding)
+    ERB.new(template).result(binding)
   )
 end
