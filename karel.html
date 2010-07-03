@@ -13,8 +13,7 @@
       Tile.prototype = {
         beepers:0,
         has_beeper: function() {
-          console.log(['Tile#has_beeper', this]);
-          return (this.beepers > 0) ? true : false;
+          return (this.beepers > 0);
         },
         pick: function() {
           if(this.has_beeper())
@@ -23,7 +22,7 @@
             throw "no_beepers";
         },
         put: function() {
-          this.beepers += 1
+          this.beepers += 1;
         },
       };
       
@@ -41,6 +40,9 @@
             return map[key] || (
               map[key] = new Tile(x,y)
             );
+          },
+          reset: function() {
+            map = {};
           }
         };
       })();
@@ -54,6 +56,13 @@
           'right': 1,
           'down': 2,
           'left': 3
+        };
+
+        var DIRECTION_WORDS = {
+          0: 'up',
+          1: 'right',
+          2: 'down',
+          3: 'left'
         };
 
         var jQ;
@@ -83,25 +92,38 @@
           },
           move: function() {
             switch(direction) {
-              case DIRECTIONS.up:    return y += 1;
-              case DIRECTIONS.down:  return y -= 1;
-              case DIRECTIONS.left:  return x -= 1;
-              case DIRECTIONS.right: return x += 1;
+              case DIRECTIONS.up:    y += 1; break;
+              case DIRECTIONS.down:  y -= 1; break;
+              case DIRECTIONS.left:  x -= 1; break;
+              case DIRECTIONS.right: x += 1; break;
             }
+            console.log('Karel moves! Karel is now at (' + x + ', ' + y + ')');
           },
           turnLeft: function() {
             if(direction > 0) direction -= 1;
             else direction = 3;
             jQ.text(DIRECTION_SYMBOLS[direction]);
+            console.log('Karel is now facing ' + DIRECTION_WORDS[direction]);
           },
           put: function() {
             return currentTile().put();
+            console.log('Karel puts! Tile has '+currentTile().beepers+' beepers.')
           },
           pick: function() {
             return currentTile().pick();
+            console.log('Karel picks! Tile has '+currentTile().beepers+' beepers.')
           },
           listen: function() {
-            return currentTile().has_beeper();
+            var r = currentTile().has_beeper();
+            if(r)
+              console.log('Karel listens... and hears beepers!');
+            else
+              console.log('Karel listens... and hears nothing.');
+            return r;
+          },
+          reset: function() {
+            Map.reset();
+            x = y = direction = 0;
           }
         };
       })();
@@ -110,6 +132,38 @@
       return function(script) {
       };
     })()
+  }
+
+  var populate = function(n) {
+    for(var i=0; i < n; i += 1) {
+      o.Karel.put();
+    }
+  }
+
+  var badass_recursion = function() {
+    if(o.Karel.listen()) {
+      o.Karel.pick();
+      badass_recursion();
+      o.Karel.move();
+    }
+  };
+
+  var basic_recursion = function() {
+    while(o.Karel.listen()) {
+      o.Karel.pick();
+      o.Karel.move();
+      o.Karel.put();
+      o.Karel.turnLeft();
+      o.Karel.turnLeft();
+      o.Karel.move();
+      o.Karel.turnLeft();
+      o.Karel.turnLeft();
+    }
+    o.Karel.move();
+    o.Karel.pick();
+    if(o.Karel.listen()) {
+      basic_recursion();
+    }
   }
 </script>
 <style type="text/css">
