@@ -36,7 +36,7 @@
         })
         return {
           at: function(x,y) {
-            var key = Math.pow(2,x)*Math.pow(3,y);
+            var key = x + ',' + y
             return map[key] || (
               map[key] = new Tile(x,y)
             );
