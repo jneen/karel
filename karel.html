@@ -161,7 +161,34 @@
     if(o.Karel.listen()) {
       basic_recursion();
     }
-  }
+  };
+
+  var smear_forward_with_gap = function() {
+    var k = o.Karel;
+    while(k.listen()) {
+      k.pick();
+      k.move();
+      k.move();
+      while(k.listen()) { k.move(); }
+      k.put();
+      k.turnLeft();
+      k.turnLeft();
+      while(k.listen()) { k.move(); }
+      k.move();
+      k.move();
+      k.turnLeft();
+      k.turnLeft();
+    }
+    k.move();
+    k.move();
+    while(k.listen()) { k.move(); }
+    k.turnLeft();
+    k.turnLeft();
+    k.move();
+    k.move();
+    k.turnLeft();
+    k.turnLeft();
+  };
 </script>
 <style type="text/css">
   #map, #map tr {
