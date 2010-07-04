@@ -85,11 +85,8 @@
         };
         var direction = 0;
 
-        //public methods (this is Karel, herself)
+        //public methods
         return {
-          currentTile: function() {
-            return currentTile();
-          },
           move: function() {
             switch(direction) {
               case DIRECTIONS.up:    y += 1; break;
